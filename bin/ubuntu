@@ -7,7 +7,7 @@ sudo apt-get update
 sudo apt install git curl ansible -y
 
 # This is fork from original
-REPO='devgeniem/gdev'
+REPO='HauptJ/gdev'
 
 # Returns 1 if not enough disk space
 # $1 disk space needed in gb
