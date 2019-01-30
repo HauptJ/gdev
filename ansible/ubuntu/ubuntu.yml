@@ -99,4 +99,4 @@
       become_method: sudo
 
     - name: Include the rest of the tasks according to your Ubuntu version
-      include: "ubuntu_{{ansible_distribution_release}}_includes.yml"
+      include: "ubuntu_xenial_includes.yml"
