@@ -17,7 +17,6 @@
         state: latest
       when: ansible_distribution == 'Ubuntu'
 
-
     - name: Install ruby
       become: yes
       dnf: 
@@ -67,6 +66,14 @@
       args:
         chdir: "{{ gdev_user_files }}/ca/"
       become: yes
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Trust self-generated signaler Root certificate in keychain
+      shell: "/etc/pki/ca-trust/source/anchors/ && sudo update-ca-certificates"
+      args:
+        chdir: "{{ gdev_user_files }}/ca/"
+      become: yes
+      when: ansible_distribution == 'Fedora'
 
     - name: Include the rest of the tasks
       include_tasks: "ubuntu_xenial_includes.yml"
