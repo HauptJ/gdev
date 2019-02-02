@@ -30,11 +30,11 @@
         path: "{{ansible_env.HOME}}/.gdev"
         state: directory
         owner: "{{ansible_env.USER}}"
-        group: "staff"
         recurse: yes
         mode: 0755
       # If this was somehow root owned make sure it's not anymore
       become: yes
+            become_method: sudo
 
     - name: Symlink gdev bin to PATH
       become: yes
@@ -45,13 +45,6 @@
         state: link
         force: yes
       tags: ['pre-install']
-      
-    - name: Add user to docker group
-      user: 
-        name: "{{ansible_env.USER}}"
-        groups: docker
-        append: yes
-      become: yes
 
     - name: Start Docker if it is not running
       become: yes
