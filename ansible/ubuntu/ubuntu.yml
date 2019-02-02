@@ -15,6 +15,15 @@
       apt: 
         name: ruby 
         state: latest
+      when: ansible_distribution == 'Ubuntu'
+
+
+    - name: Install ruby
+      become: yes
+      dnf: 
+        name: ruby 
+        state: latest
+      when: ansible_distribution == 'Fedora'
 
     - name: Create gdev directory
       file:
