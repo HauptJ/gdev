@@ -69,10 +69,14 @@
       when: ansible_distribution == 'Ubuntu'
 
     - name: Trust self-generated signaler Root certificate in keychain
-      shell: "cp ca.crt /etc/pki/ca-trust/source/anchors/ && sudo update-ca-certificates"
+      shell: "cp ca.crt /etc/pki/ca-trust/source/anchors/"
       args:
         chdir: "{{ gdev_user_files }}/ca/"
       become: yes
+      when: ansible_distribution == 'Fedora'
+
+    - name: update trusted ca Fedora
+      shell: /bin/update-ca-trust
       when: ansible_distribution == 'Fedora'
 
     - name: Include the rest of the tasks
