@@ -34,7 +34,7 @@
         mode: 0755
       # If this was somehow root owned make sure it's not anymore
       become: yes
-            become_method: sudo
+      become_method: sudo
 
     - name: Symlink gdev bin to PATH
       become: yes
