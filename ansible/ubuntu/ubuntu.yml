@@ -77,6 +77,7 @@
 
     - name: update trusted ca Fedora
       shell: /bin/update-ca-trust
+      become: yes
       when: ansible_distribution == 'Fedora'
 
     - name: Include the rest of the tasks
