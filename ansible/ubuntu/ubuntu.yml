@@ -10,19 +10,29 @@
 
   tasks:
 
-    - name: Install ruby
+    - name: Install ruby and php
       become: yes
       apt: 
-        name: ruby 
+        name: 
+          - ruby 
+          - php
         state: latest
       when: ansible_distribution == 'Ubuntu'
 
-    - name: Install ruby
+    - name: Install ruby and php
       become: yes
       dnf: 
-        name: ruby 
+        name: 
+          - ruby 
+          - php
         state: latest
       when: ansible_distribution == 'Fedora'
+
+    - name: Download and install wp-cli
+      get_url:
+        url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+        dest: /usr/local/bin/wp
+        mode: a+x
 
     - name: Create gdev directory
       file:

@@ -10,9 +10,9 @@ Install gdev dependencies and start the development environment by running:
 
     $ curl -fsSL https://raw.githubusercontent.com/devgeniem/gdev/master/bin/bootstrap | bash
 
-If you're installing on a Ubuntu machine, run:
+If you're installing on a Ubuntu or Fedora machine, run:
 
-    $ curl -fsSL https://raw.githubusercontent.com/devgeniem/gdev/master/bin/ubuntu | bash
+    $ curl -fsSL https://raw.githubusercontent.com/HauptJ/gdev/master/bin/ubuntu | bash
 
 When using linux and MacOS computers on a shared project and you have different docker-compose.yml files for each, linux users need to add an environment variable for gdev to be able to use the correct compose configuration. Add this to your chosen shell configuration (for example .bashrc or .zshrc).
 
