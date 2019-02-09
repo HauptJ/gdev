@@ -1,0 +1,11 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+
+  vars:
+    gdev_env_dir: "/usr/local/gdev-env"
+    gdev_user_files: "{{ansible_env.HOME}}/.gdev"
+    machine_ip: 172.17.0.1
+    compose_version: 1.15.0
+
+  roles:

@@ -1,0 +1,97 @@
+---
+- name: Install ruby
+  become: yes
+  apt: 
+    name: ruby 
+    state: latest
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Install ruby
+  become: yes
+  dnf: 
+    name: ruby 
+    state: latest
+  when: ansible_distribution == 'Fedora'
+
+- name: Create gdev directory
+  file:
+    path: "{{ansible_env.HOME}}/.gdev"
+    state: directory
+    owner: "{{ansible_env.USER}}"
+    recurse: yes
+    mode: 0755
+  # If this was somehow root owned make sure it's not anymore
+  become: yes
+  become_method: sudo
+
+- name: Symlink gdev bin to PATH
+  become: yes
+  become_method: sudo
+  file:
+    src: "{{gdev_env_dir}}/bin/gdev"
+    dest: /usr/local/bin/gdev
+    state: link
+    force: yes
+  tags: ['pre-install']
+
+- name: Start Docker if it is not running
+  become: yes
+  service:
+    name: docker
+    state: started
+
+- name: Start gdev services
+  shell: "sg docker -c '{{ gdev_env_dir }}/bin/gdev service up'"
+
+- name: Wait for signaler to create CA file
+  wait_for:
+    path: "{{ gdev_user_files }}/ca/ca.crt"
+    state: present
+    timeout: 30
+
+# We want to use https locally and you only use ca.key which is generated to you
+- name: Trust self-generated signaler Root certificate in keychain
+  shell: "cp ca.crt /usr/local/share/ca-certificates/ && sudo update-ca-certificates"
+  args:
+    chdir: "{{ gdev_user_files }}/ca/"
+  become: yes
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Trust self-generated signaler Root certificate in keychain
+  shell: "cp ca.crt /etc/pki/ca-trust/source/anchors/"
+  args:
+    chdir: "{{ gdev_user_files }}/ca/"
+  become: yes
+  when: ansible_distribution == 'Fedora'
+
+- name: update trusted ca Fedora
+  shell: /bin/update-ca-trust
+  become: yes
+  when: ansible_distribution == 'Fedora'
+
+- name: Ensure that the dnsmasq directory exists
+  become: yes
+  file: path=/etc/NetworkManager/dnsmasq.d state=directory
+
+- name: Create a custom resolver file under the dnsmasq directory
+  become: yes
+  template:
+    src: "{{ gdev_env_dir }}/ansible/ubuntu/ubuntu_dnsmasq.conf"
+    dest: "/etc/NetworkManager/dnsmasq.d/{{item.domain}}.conf"
+    force: yes
+  with_items:
+    - { ip: "{{ machine_ip }}", domain: test }
+
+- name: Restart systemd-resolved - Ubuntu
+  become: yes     
+  service: 
+    name: network-manager
+    state: restarted
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Restart systemd-resolved - Fedora
+  become: yes     
+  service: 
+    name: NetworkManager
+    state: restarted
+  when: ansible_distribution == 'Fedora'
